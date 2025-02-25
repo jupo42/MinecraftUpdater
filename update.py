@@ -12,6 +12,7 @@ import requests
 UPDATE_TO_SNAPSHOT = False
 BACKUP_DIR = 'world_backups'
 LOG_FILENAME = 'auto_updater.log'
+SESSION_NAME = 'minecraft'
 RAM_INITIAL = '512m'
 RAM_MAX = '3g'
 
@@ -54,20 +55,20 @@ for version in data['versions']:
             with open('minecraft_server.jar', 'wb') as jar_file:
                 jar_file.write(response.content)
             logging.info('Downloaded.')
-            os.system('screen -S minecraft -X stuff \'say ATTENTION: Server will shutdown temporarily to update in 30 seconds.^M\'')
+            os.system('screen -S ' + SESSION_NAME + ' -X stuff \'say ATTENTION: Server will shutdown temporarily to update in 30 seconds.^M\'')
             logging.info('Shutting down server in 30 seconds.')
 
             for i in range(20, 9, -10):
                 time.sleep(10)
-                os.system('screen -S minecraft -X stuff \'say Shutdown in ' + str(i) + ' seconds^M\'')
+                os.system('screen -S ' + SESSION_NAME + ' -X stuff \'say Shutdown in ' + str(i) + ' seconds^M\'')
 
             for i in range(9, 0, -1):
                 time.sleep(1)
-                os.system('screen -S minecraft -X stuff \'say Shutdown in ' + str(i) + ' seconds^M\'')
+                os.system('screen -S ' + SESSION_NAME + ' -X stuff \'say Shutdown in ' + str(i) + ' seconds^M\'')
             time.sleep(1)
 
             logging.info('Stopping server.')
-            os.system('screen -S minecraft -X stuff \'stop^M\'')
+            os.system('screen -S ' + SESSION_NAME + ' -X stuff \'stop^M\'')
             time.sleep(5)
             logging.info('Backing up world...')
 
@@ -88,7 +89,7 @@ for version in data['versions']:
             os.rename('minecraft_server.jar', '../minecraft_server.jar')
             logging.info('Starting server...')
             os.chdir("..")
-            os.system('screen -S minecraft -d -m java -Xms' + RAM_INITIAL + ' -Xmx' + RAM_MAX + ' -jar minecraft_server.jar')
+            os.system('screen -S ' + SESSION_NAME + ' -d -m java -Xms' + RAM_INITIAL + ' -Xmx' + RAM_MAX + ' -jar minecraft_server.jar')
 
         else:
             logging.info('Server is already up to date.')
